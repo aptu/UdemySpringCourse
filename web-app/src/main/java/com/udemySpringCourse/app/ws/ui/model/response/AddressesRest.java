@@ -1,7 +1,9 @@
 package com.udemySpringCourse.app.ws.ui.model.response;
 
 
-public class AddressesRest {
+import org.springframework.hateoas.ResourceSupport;
+
+public class AddressesRest extends ResourceSupport {
     private String addressId; //we can share it publically
     private String city;
     private String country;

@@ -21,11 +21,13 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    //configures entry points of application
+    //configures entry points of application: it's not public
+    //Two public URLs are sign_up and verification_email_url
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests()
                 .antMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL).permitAll() //creates a new user accoint should be autorized
+                .antMatchers(HttpMethod.GET, SecurityConstants.VERIFICATION_EMAIL_URL).permitAll() //public verification email url
                 .anyRequest().authenticated().and()
                 .addFilter(getAuthenticationFilter())//any other request should be authenticated
                 .addFilter(new AuthorizationFilter(authenticationManager()))
@@ -38,7 +40,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
     }
 
-    //creates a custom login url
+    //A public url: creates a custom login url
     public AuthenticationFilter getAuthenticationFilter() throws Exception {
         final AuthenticationFilter filter = new AuthenticationFilter(authenticationManager());
         filter.setFilterProcessesUrl("/users/login");

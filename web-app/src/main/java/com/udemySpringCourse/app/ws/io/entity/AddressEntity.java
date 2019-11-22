@@ -1,5 +1,6 @@
 package com.udemySpringCourse.app.ws.io.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.udemySpringCourse.app.ws.shared.dto.UserDto;
 
 import javax.persistence.*;
@@ -32,6 +33,7 @@ public class AddressEntity implements Serializable {
 
     @ManyToOne //Many addresses can belong to 1 user
     @JoinColumn(name="users_id") //common field
+    @JsonIgnore //cause of ASSERTION FAILED ***: "!errorOutstanding" with message transform method call failed at JPLISAgent.c line: 844
     private UserEntity userDetails;
 
     public long getId() {

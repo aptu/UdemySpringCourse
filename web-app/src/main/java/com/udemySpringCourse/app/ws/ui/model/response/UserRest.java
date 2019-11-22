@@ -1,8 +1,10 @@
 package com.udemySpringCourse.app.ws.ui.model.response;
 
+import org.springframework.hateoas.ResourceSupport;
+
 import java.util.List;
 
-public class UserRest {
+public class UserRest extends ResourceSupport {
     private String userId;
     private String firstName;
     private String lastName;

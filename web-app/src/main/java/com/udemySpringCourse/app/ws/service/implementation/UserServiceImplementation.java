@@ -58,6 +58,8 @@ public class UserServiceImplementation implements UserService {
         String publicUserId = utils.generateUserId(30);
         userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userEntity.setUserId(publicUserId);
+        userEntity.setEmailVerificationToken(Utils.generateEmailVerificationToken(publicUserId));
+        userEntity.setEmailVerificationStatus(false);
 
         UserEntity storedUserDetails = userRepository.save(userEntity);
 
@@ -71,8 +73,10 @@ public class UserServiceImplementation implements UserService {
         if (userEntity == null) {
             throw new UsernameNotFoundException(email);
         }
-        return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(),
-                new ArrayList<>());
+//        return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(),
+//                new ArrayList<>());
+        return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), userEntity.getEmailVerificationStatus(),
+                true, true, true, new ArrayList<>());
     }
     @Override
     public UserDto getUser(String email) {
@@ -139,5 +143,24 @@ public class UserServiceImplementation implements UserService {
         return returnValue;
     }
 
+    @Override
+    public boolean verifyEmailToken(String token) {
+        boolean returnValue = false;
+
+        //find user by token
+        UserEntity userEntity = userRepository.findUserByEmailVerificationToken(token);
+
+        if (userEntity != null) {
+            boolean hasTokenExpired = Utils.hasTokenExpired(token);
+            if (!hasTokenExpired) {
+                userEntity.setEmailVerificationToken(null); //we erase the prev token
+                userEntity.setEmailVerificationStatus(Boolean.TRUE);
+                userRepository.save(userEntity);
+                returnValue = true;
+            }
+        }
+        return returnValue;
+
+    }
 
 }
